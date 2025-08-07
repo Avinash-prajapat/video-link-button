@@ -4,23 +4,60 @@
   <meta charset="UTF-8">
   <title>Trigger Link</title>
   <script>
-    function triggerLink() {
-      fetch("https://avinash-prajapat.github.io/video-analysis-frontend/", {
-        method: "GET",
-        mode: "no-cors"
-      })
-      .then(() => {
-        alert("Link triggered successfully in background!");
-      })
-      .catch((error) => {
-        alert("Failed to trigger link!");
-        console.error(error);
-      });
+function uploadRecordedVideo() {
+    if (recordedChunks.length === 0) {
+        alert("⚠️ No recording available to upload!");
+        return;
     }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Submitting...";
+
+    const username = localStorage.getItem("username");
+    const mobile = localStorage.getItem("mobile");
+
+    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+    const finalFilename = `${username}_${mobile}_video.webm`;
+    const file = new File([blob], finalFilename, { type: 'video/webm' });
+
+    const formData = new FormData();
+    formData.append("video", file);
+
+    fetch("https://video-analysis-backend-2l85.onrender.com/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("❌ Server error");
+        return res.json();
+    })
+    .then(data => {
+        console.log("✅ Upload success:", data);
+        document.getElementById("result").innerText =
+            `✅ Thank You! Your Submission has been sent successfully!`;
+
+        // ✅ Silently trigger analyze-drive link without opening it
+        fetch("http://localhost:5000/analyze-drive", {
+            method: "GET",
+            mode: "no-cors"
+        });
+
+        // (Optional) You can show a success message
+        document.getElementById("result").innerText += "\n📡 Analysis link triggered!";
+    })
+    .catch(err => {
+        console.error("❌ Error:", err);
+        document.getElementById("result").innerText +=
+            "\n⚠️ Something went wrong. Please try again.";
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit";
+    });
+}
+
   </script>
 </head>
 <body>
   <h2>Trigger Link Example</h2>
-  <button onclick="triggerLink()">Trigger Link</button>
+  <button onclick="uploadRecordedVideo()">Trigger Link</button>
 </body>
 </html>
