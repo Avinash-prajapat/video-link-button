@@ -1,14 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Open Video Analysis</title>
+  <meta charset="UTF-8">
+  <title>Trigger Link</title>
+  <script>
+    function triggerLink() {
+      fetch("https://avinash-prajapat.github.io/video-analysis-frontend/", {
+        method: "GET",
+        mode: "no-cors"
+      })
+      .then(() => {
+        alert("Link triggered successfully in background!");
+      })
+      .catch((error) => {
+        alert("Failed to trigger link!");
+        console.error(error);
+      });
+    }
+  </script>
 </head>
-<body style="text-align:center; margin-top: 100px;">
-    <h2>Click the button to open video analysis</h2>
-    <button onclick="window.location.href='https://avinash-prajapat.github.io/video-analysis-frontend/'"
-            style="padding: 15px 30px; font-size: 18px; cursor: pointer;">
-        Open Video Analysis
-    </button>
+<body>
+  <h2>Trigger Link Example</h2>
+  <button onclick="triggerLink()">Trigger Link</button>
 </body>
 </html>
